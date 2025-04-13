@@ -3,6 +3,7 @@ from app.routes import main
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = "my_very_secret_key" #Open session function
     app.register_blueprint(main)
     return app
 
