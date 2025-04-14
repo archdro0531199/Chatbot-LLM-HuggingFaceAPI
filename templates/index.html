@@ -3,26 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <title>Smart Assistant Chatbot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
   <style>
-    body { font-family: sans-serif; padding: 2em; max-width: 600px; margin: auto; }
-    input[type="text"] { width: 100%; padding: 0.5em; font-size: 1em; }
-    button { margin-top: 1em; padding: 0.5em 1em; font-size: 1em; }
-    .response { margin-top: 2em; background: #f1f1f1; padding: 1em; border-radius: 6px; }
+    body { font-family: sans-serif; padding: 2em; max-width: 600px; margin: auto; background: #f9f9f9; }
+	.bubble { padding: 0.75em 1em; margin: 0.5em 0; border-radius: 10px; max-width: 80%; }
+	.user { background-color: #d1e7dd; align-self: flex-end; text-align: right; }
+	.bot { background-color: #e2e3e5; align-self:" flex-start; text-align: left; }
+	.chat-container {display: flex; flex-direction: column; gap: 0.5em; margin-bottom: 2em; }
+    form input[type = "text"] { width: 100%; padding: 0.5em; font-size: 1em; }
+	form button { margin-top: 1em; padding: 0.5em 1em; font-size: 1em; }
   </style>
 </head>
 <body>
   <h1>🧠 Smart Assistant</h1>
+  
+  <div class="chat-container">
+	{% for msg in chat_history %}
+		<div class="bubble {{ msg.role }}">
+			<strong>{{ "你" if msg.role == "user" else "助手" }}</strong><br/>
+			{{ msg.text }}
+		</div>
+	{% endfor %}
+  </div>
   <form method="POST">
     <input type="text" name="user_input" placeholder="請輸入你的問題..." required>
     <button type="submit">送出</button>
   </form>
 
-  {% if response %}
+  <!--{% if response %}
     <div class="response">
       <strong>回應：</strong> {{ response }}
     </div>
-  {% endif %}
+  {% endif %}-->
 </body>
 </html>
 
