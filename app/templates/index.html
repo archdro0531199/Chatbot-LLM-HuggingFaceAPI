@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Assistant Chatbot</title>
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+</head>
+<script>
+    window.onload = function () {
+      const chatLog = document.querySelector(".chat-log");
+      chatLog.scrollTop = chatLog.scrollHeight;
+    };
+  </script>
+
+<body>
+  <h1>🧠 Smart Assistant</h1>
+  
+  <div class="chat-container">
+	  <div class="chat-log">
+		{% for msg in chat_history %}
+		  <div class="bubble {{ msg.role }}">
+			<strong>{{ "你" if msg.role == "user" else "助手" }}</strong><br/>
+			{{ msg.text }}
+		  </div>
+		{% endfor %}
+	  </div>
+	</div>
+
+  <form method="POST">
+    <input type="text" name="user_input" placeholder="請輸入你的問題..." required>
+    <button type="submit">送出</button>
+  </form>
+  
+  <form method="POST">
+	<input type="hidden" name="clear_chat" value="1">
+	<button type="submit" class="clear-btn">🗑️ 清除對話</button>
+  </form>
+
+  <!--{% if response %}
+    <div class="response">
+      <strong>回應：</strong> {{ response }}
+    </div>
+  {% endif %}-->
+</body>
+</html>
+
