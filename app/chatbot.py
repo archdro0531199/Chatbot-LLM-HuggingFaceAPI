@@ -9,31 +9,37 @@ def detect_language(text):
         return 'zh'
     return 'en'
     
-def llm(query):
+def llm(query, history = None):
+    
+    history = history or []
+    
+    lang = detect_language(query)
+    
+    if lang == 'zh':
+        system_prompt = "你是一個樂於助人的聰明助手，請用中文準確地回答用戶的提問"
+    else:
+        system_prompt = "You are a helpful and smart assistant. You accurately provide answers to user queries."
+
+    conversation = ""
+    
+    for turn in history:
+        if turn["role"] == "user":
+            conversation += f"<|start_header_id|user|end_header_id|>\n{turn['text']}<|eot_id|>"
+        elif turn["role"] == "bot":
+            conversation += f"<start_header_id|>assistant<|end_header_id|>\n{turn['text']}<|eot_id|>"
+            
+    conversation += f"<|start_header_id|>user<|end_header_id|>\n{query}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"
+    
+    prompt = f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n{system_prompt}\n<|eot_id|>{conversation}"
+
     parameters = {
-        "max_new_tokens": 5000,
+        "max_new_tokens": 300,
         "temperature": 0.01,
         "top_k": 50,
         "top_p": 0.95,
         "return_full_text": False
     }
     
-    lang = detect_language(query)
-    
-    if lang == 'zh':
-        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-                你是一個樂於助人的聰明助手，請用中文準確地回答用戶的提問。
-                <|eot_id|><|start_header_id|>user<|end_header_id|> 
-                以下是用戶的問題：```{query}```。
-                請用簡潔準確的中文作答。
-                <|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
-    else:
-        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-                You are a helpful and smart assistant. You accurately provide answer to the provided user query.
-                <|eot_id|><|start_header_id|>user<|end_header_id|> 
-                Here is the query: ```{query}```.
-                Provide precise and concise answer.
-                <|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
 
     headers = {
       'Authorization': f'Bearer {token}',
@@ -63,5 +69,4 @@ def llm(query):
         return f"[ERROR] 發生例外錯誤：{str(e)}"
 
 
-def get_response(user_input):
-    return llm(user_input)
+
