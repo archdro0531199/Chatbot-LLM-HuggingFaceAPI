@@ -1,20 +1,8 @@
+import requests
 import re
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from datetime import datetime
 
-#url = "https://api-inference.huggingface.co/models/openlm-research/open_llama_7b_v2"
-#token = "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"  # Replace with your Hugging Face token
-
-model_name = "openlm-research/open_llama_7b_v2"
-
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-tokenizer.pad_token = tokenizer.eos_token
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype = torch.float16,
-    device_map = "auto"
-)
+url = "https://api-inference.huggingface.co/models/openlm-research/open_llama_7b_v2"
+token = "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"  # Replace with your Hugging Face token
 
 def detect_language(text):
     if re.search(r'[\u4e00-\u9fff]', text):
@@ -62,29 +50,38 @@ def llm(user_input, history = None):
     history = history or []
     prompt = build_prompt(user_input, history)
 
-    inputs = tokenizer(prompt, return_tensors="pt", padding=True).to(model.device)
-    input_ids = inputs["input_ids"]
-    attention_mask = inputs["attention_mask"]
 
-    with torch.no_grad():
-        print(f"[DEBUG] 開始 generate()：{datetime.now().strftime('%H:%M:%S')}")
+    headers = {
+      'Authorization': f'Bearer {token}',
+      'Content-Type': 'application/json'
+    }
 
-        output_ids = model.generate(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            max_new_tokens=128,              # 減少輸出長度（避免 GPU 卡）
-            max_time=10,                     # 最多 10 秒就結束
-            do_sample=True,
-            temperature=0.7,
-            top_p=0.9,
-            pad_token_id=tokenizer.eos_token_id
-        )
-
-        print(f"[DEBUG] 結束 generate()：{datetime.now().strftime('%H:%M:%S')}")
-
-    output = tokenizer.decode(output_ids[0], skip_special_tokens=True)
-    return output.split("<|start_header_id|>assistant<|end_header_id|>")[-1].strip()
     
+    payload = {
+      "inputs": prompt,
+      "parameters": {
+          "max_new_tokens": 512,
+          "temperature": 0.3,
+          "top_k": 50,
+          "top_p": 0.9,
+          "return_full_text": False
+      }
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        data = response.json()
+        print("[DEBUG] 回傳內容：", data)
+
+        if isinstance(data, list) and 'generated_text' in data[0]:
+            return data[0]['generated_text'].strip()
+        elif isinstance(data, dict) and 'error' in data:
+            return f"[ERROR] API 回傳錯誤：{data['error']}"
+        else:
+            return "[ERROR] 無法解析 API 回傳格式"
+
+    except Exception as e:
+        return f"[ERROR] 發生例外錯誤：{str(e)}"
 
 
 
