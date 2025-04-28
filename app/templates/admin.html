@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>後台管理 - Smart Assistant Admin</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <h1>🔧 Smart Assistant - Admin Dashboard</h1>
+
+  <div class="admin-section">
+    <h2>💻 Hugging Face API 使用情況</h2>
+    <p>已使用金額（美元）：{{ used_amount }}</p>
+    <p>總額度（美元）：{{ total_quota }}</p>
+    <p>剩餘額度（美元）：{{ remaining_quota }}</p>
+  </div>
+
+  <br>
+
+  <a href="/">⬅️ 回到聊天頁面</a>
+</body>
+</html>

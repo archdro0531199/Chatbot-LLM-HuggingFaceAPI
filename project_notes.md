@@ -65,6 +65,32 @@ Align project with real-world job expectations and provide a hosted, stable LLM 
 
 ---
 
+## API Quota Check Integration (Hugging Face)
+
+### Feature Summary
+- Implemented a lightweight Python script (`check_hf_quota.py`) to automatically query the Hugging Face Inference API usage and quota status.
+- Allows future quota monitoring after project deployment.
+
+### Script Functions
+- Send `GET` request to Hugging Face billing API endpoint.
+- Parse the returned JSON response, extracting:
+  - Current usage cost (USD)
+  - Total allocated quota (USD)
+  - Remaining quota (USD)
+
+### Current Result
+- ? API call successful
+- ? Token verified valid
+- ?? No usage data returned (`null`) - likely because:
+  - Account is newly created
+  - No billing activity or pending system update
+
+### Key Learning
+- Hugging Face free tier users or new accounts might not immediately have usage/billing data.
+- System integration should anticipate empty fields without breaking program flow.
+
+---
+
 ## Final Outcome
 
 The system now runs using Hugging Face Inference API with:
