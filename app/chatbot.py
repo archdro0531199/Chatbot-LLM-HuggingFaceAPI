@@ -52,7 +52,7 @@ def build_prompt(user_input, history):
             "Please answer briefly and concisely using no more than 3 sentences.\n"
         )
 
-    prompt = f"{system_prompt}\n{history_text}User: {user_input}\nAssistant:\n"
+    prompt = f"<s>[INST] {system_prompt}\n\n{history_text}User: {user_input} [/INST]\nAssistant:"
     return prompt
 
 def llm(user_input, history=None):
