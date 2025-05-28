@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Hugging Face API 設定
 url = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3"
-token = "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" 
+token = "h{token}" 
 
 '''model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
